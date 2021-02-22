@@ -8,49 +8,44 @@ using System.Text;
 
 namespace BrickBreaker
 {
-    class Ball
+    class Paddle
     {
         Texture2D _tex;
         Color _tint;
         Vector2 _pos;
         Vector2 _size;
         public int XSpeed;
-        public int YSpeed;
+        public int direction;
 
         public Rectangle hitBox => new Rectangle((int)_pos.X, (int)_pos.Y, (int)_size.X, (int)_size.Y);
 
-        public Ball(Texture2D tex, Color tint, Vector2 pos, Vector2 size)
+        public Paddle(Texture2D tex, Color tint, Vector2 pos, Vector2 size, int xSpeed)
         {
             _tex = tex;
             _tint = tint;
             _pos = pos;
             _size = size;
-            XSpeed = 4;
-            YSpeed = 12;
+            XSpeed = xSpeed;
+            direction = 0;
         }
 
-        public void Update(GameTime gameTime, Rectangle screen)
+        public void Update(GameTime gameTime)
         {
-            if (_pos.X + _size.X > screen.Right)
+            if(Keyboard.GetState().IsKeyDown(Keys.Right))
             {
-                XSpeed = -1 * Math.Abs(XSpeed);
+                direction = 1;
+                _pos.X += XSpeed;
             }
-            else if(_pos.X < screen.Left)
+            else if(Keyboard.GetState().IsKeyDown(Keys.Left))
             {
-                XSpeed = Math.Abs(XSpeed);
+                direction = -1;
+                _pos.X -= XSpeed;
             }
-
-            if(_pos.Y + _size.Y > screen.Bottom)
+            else
             {
-                YSpeed = -1 * Math.Abs(YSpeed);
+                direction = 0;
             }
-            else if(_pos.Y < screen.Top)
-            {
-                YSpeed = Math.Abs(YSpeed);
-            }
-
-            _pos.X += XSpeed;
-            _pos.Y += YSpeed;
+            
         }
 
         public void Draw(SpriteBatch spriteBatch)

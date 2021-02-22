@@ -19,13 +19,13 @@ namespace BrickBreaker
         public Rectangle hitBox => new Rectangle((int)_pos.X, (int)_pos.Y, (int)_size.X, (int)_size.Y);
         public int Hp;
 
-        public Brick(int hp, Texture2D tex, Color tint, Vector2 pos, Vector2 size)
+        public Brick(Texture2D tex, Color tint, Vector2 pos, Vector2 size, int hp)
         {
-            Hp = hp;
             _tex = tex;
             _tint = tint;
             _pos = pos;
             _size = size;
+            Hp = hp;
         }
 
         public void Draw(SpriteBatch spriteBatch)
