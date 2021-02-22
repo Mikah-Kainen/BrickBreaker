@@ -29,7 +29,7 @@ namespace BrickBreaker
             direction = 0;
         }
 
-        public void Update(GameTime gameTime)
+        public void Update(GameTime gameTime1, Rectangle gameBounds)
         {
             if(Keyboard.GetState().IsKeyDown(Keys.Right))
             {
@@ -44,6 +44,10 @@ namespace BrickBreaker
             else
             {
                 direction = 0;
+                if (gameBounds.Contains(Mouse.GetState().Position))
+                {
+                    _pos.X = Mouse.GetState().X - _size.X / 2;
+                }
             }
             
         }

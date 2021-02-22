@@ -1,6 +1,7 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
+
 using System;
 using System.Collections.Generic;
 
@@ -20,12 +21,15 @@ namespace BrickBreaker
         Ball _ball;
         Paddle _paddle;
 
+        bool _leaveGame;
+
         public Game1()
         {
             _graphics = new GraphicsDeviceManager(this);
             Content.RootDirectory = "Content";
             IsMouseVisible = true;
         }
+        Rectangle screen => GraphicsDevice.Viewport.Bounds;
 
         protected override void Initialize()
         {
@@ -35,18 +39,19 @@ namespace BrickBreaker
             _graphics.PreferredBackBufferHeight = 1000;
             _graphics.ApplyChanges();
 
-            _yScreen = GraphicsDevice.Viewport.Bounds.Height / 2;
+            _yScreen = screen.Height / 2;
 
             _brickIncrimentX = 15;
             _brickIncrimentY = 15;
-   
-            _brickSizeX = GraphicsDevice.Viewport.Bounds.Width / _brickIncrimentX;
+
+            _brickSizeX = screen.Width / _brickIncrimentX;
             _brickSizeY = _yScreen / _brickIncrimentY;
 
             _bricks = new List<Brick>();
             _ball = new Ball(CreatePixel(GraphicsDevice), Color.Blue, new Vector2(0, GraphicsDevice.Viewport.Height * 2 / 3), new Vector2(GraphicsDevice.Viewport.Width / 50, GraphicsDevice.Viewport.Width / 50));
-            _paddle = new Paddle(CreatePixel(GraphicsDevice), Color.DarkGray, new Vector2(0, GraphicsDevice.Viewport.Bounds.Height - 50), new Vector2(GraphicsDevice.Viewport.Width / 10, GraphicsDevice.Viewport.Height / 50), 10);
+            _paddle = new Paddle(CreatePixel(GraphicsDevice), Color.DarkGray, new Vector2(0, screen.Height - 50), new Vector2(GraphicsDevice.Viewport.Width / 10, GraphicsDevice.Viewport.Height / 50), 10);
 
+            _leaveGame = false;
             base.Initialize();
         }
 
@@ -54,7 +59,7 @@ namespace BrickBreaker
         {
             _spriteBatch = new SpriteBatch(GraphicsDevice);
 
-            for (int x = 0; x < _brickIncrimentY; x ++)
+            for (int x = 0; x < _brickIncrimentY; x++)
             {
                 for (int i = 0; i < _brickIncrimentX; i++)
                 {
@@ -66,14 +71,14 @@ namespace BrickBreaker
 
         protected override void Update(GameTime gameTime)
         {
-            if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed || Keyboard.GetState().IsKeyDown(Keys.Escape))
+            if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed || Keyboard.GetState().IsKeyDown(Keys.Escape) || _leaveGame)
                 Exit();
 
 
             bool didChange = false;
-            foreach(Brick brick in _bricks)
+            foreach (Brick brick in _bricks)
             {
-                if(brick.Hp > 0 && brick.hitBox.Intersects(_ball.hitBox))
+                if (brick.Hp > 0 && brick.hitBox.Intersects(_ball.hitBox))
                 {
                     brick.Hp--;
                     if (!didChange)
@@ -89,14 +94,14 @@ namespace BrickBreaker
                 }
             }
 
-            if(_ball.hitBox.Intersects(_paddle.hitBox))
+            if (_ball.hitBox.Intersects(_paddle.hitBox))
             {
                 _ball.YSpeed *= -1;
-                if(_paddle.direction > 0)
+                if (_paddle.direction > 0)
                 {
                     _ball.XSpeed = Math.Abs(_ball.XSpeed);
                 }
-                else if(_paddle.direction < 0)
+                else if (_paddle.direction < 0)
                 {
                     _ball.XSpeed = -1 * Math.Abs(_ball.XSpeed);
                 }
@@ -104,8 +109,8 @@ namespace BrickBreaker
 
 
             // TODO: Add your update logic here
-            _ball.Update(gameTime, GraphicsDevice.Viewport.Bounds);
-            _paddle.Update(gameTime);
+            _leaveGame = _ball.Update(gameTime, GraphicsDevice.Viewport.Bounds);
+            _paddle.Update(gameTime, GraphicsDevice.Viewport.Bounds);
             base.Update(gameTime);
         }
 
@@ -114,7 +119,7 @@ namespace BrickBreaker
             GraphicsDevice.Clear(Color.CornflowerBlue);
             _spriteBatch.Begin();
 
-            foreach(Brick brick in _bricks)
+            foreach (Brick brick in _bricks)
             {
                 brick.Draw(_spriteBatch);
             }

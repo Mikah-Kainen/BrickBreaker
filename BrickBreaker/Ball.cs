@@ -26,10 +26,10 @@ namespace BrickBreaker
             _pos = pos;
             _size = size;
             XSpeed = 4;
-            YSpeed = 12;
+            YSpeed = -12;
         }
 
-        public void Update(GameTime gameTime, Rectangle screen)
+        public bool Update(GameTime gameTime, Rectangle screen)
         {
             if (_pos.X + _size.X > screen.Right)
             {
@@ -40,17 +40,20 @@ namespace BrickBreaker
                 XSpeed = Math.Abs(XSpeed);
             }
 
-            if(_pos.Y + _size.Y > screen.Bottom)
+            if (_pos.Y + _size.Y > screen.Bottom)
             {
-                YSpeed = -1 * Math.Abs(YSpeed);
+                Console.WriteLine("You Lost");
+                //YSpeed = -1 * Math.Abs(YSpeed);
+                return true;
             }
-            else if(_pos.Y < screen.Top)
+            else if (_pos.Y < screen.Top)
             {
                 YSpeed = Math.Abs(YSpeed);
             }
 
             _pos.X += XSpeed;
             _pos.Y += YSpeed;
+            return false;
         }
 
         public void Draw(SpriteBatch spriteBatch)
